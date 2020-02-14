@@ -49,10 +49,14 @@ class Franchise():
         return df
     
     def draft(self, year):
+        """
+        get draft for each round of a year.
+        """
+        # TODO refactor and error proof
         # "https://widgets.sports-reference.com/wg.fcgi?css=1&site=br&url=%2Fdraft%2F%3Fteam_ID%3DSTL%26year_ID%3D2019%26draft_type%3Djunreg%26query_type%3Dfranch_year%26from_type_jc%3D0%26from_type_hs%3D0%26from_type_4y%3D0%26from_type_unk%3D0&div=div_draft_stats"
         # https://www.baseball-reference.com/draft/?team_ID=STL&year_ID=2019&draft_type=junreg&query_type=franch_year&from_type_jc=0&from_type_hs=0&from_type_4y=0&from_type_unk=0
-        query = f"team_ID={self.abbr}&year_ID={year}&draft_type=junreg&query_type=franch_year&from_type_jc=0&from_type_hs=0&from_type_4y=0&from_type_unk=0"
-        fran_draft_url = f"{BASE_URL}draft%2F%3F{query}&div=div_draft_stat"
+        query = f"team_ID%3D{self.abbr}%26year_ID%3D{year}%26draft_type%3Djunreg%26query_type%3Dfranch_year%26from_type_jc%3D0%26from_type_hs%3D0%26from_type_4y%3D0%26from_type_unk%3D0"
+        fran_draft_url = f"{BASE_URL}draft%2F%3F{query}&div=div_draft_stats"
         df = pd.read_html(fran_draft_url)[0]
         df = numberize_df(df)
         return df
