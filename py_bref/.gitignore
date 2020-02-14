@@ -1,0 +1,10 @@
+# Build files
+build
+dist
+pkg
+*.egg
+*.egg-info
+
+*.py[oc]
+
+*.ipynb
