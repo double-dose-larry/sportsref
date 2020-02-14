@@ -1,5 +1,6 @@
 import pandas as pd
 from fuzzywuzzy import process
+from functools import partial
 
 def get_players():
     player_db_url = "https://d3k2oh6evki4b7.cloudfront.net/short/inc/players_search_list.csv" # This is what baseball-reference puts in the browser to make their player search fast
@@ -26,11 +27,18 @@ def get_frans():
     return df
 
 def get_fran_info(search_string, verbose=True):
-    df = get_teams()
+    df = get_frans()
     name, pct_sure, index = process.extract(search_string, df.name.append(df.abbr), limit=1)[0]
     if verbose:
         print(f"I'm {pct_sure}% that you want {name}")
     return df.loc[index]
+
+def numberize_df(df):
+    """
+    uses pandas.to_numeric to appropriate columns to numerical dtypes
+    """
+    return df.apply(partial(pd.to_numeric, errors="ignore"))
+    
 
 def validate_input(inpt, valid_choices):
         if not inpt in valid_choices:

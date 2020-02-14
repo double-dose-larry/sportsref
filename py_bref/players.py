@@ -1,7 +1,6 @@
-from .bref_util import get_player_info, validate_input
+from .bref_util import get_player_info, validate_input, numberize_df
 from .constants import BASE_URL
 import pandas as pd
-from functools import partial
 
 class Player():
     
@@ -34,7 +33,7 @@ class Player():
         try:
             df = pd.read_html(player_overview_url)[0].query("Lg == 'NL' or Lg == 'AL'")
             df = df.query("Tm != 'TOT'")
-            df = df.apply(partial(pd.to_numeric, errors="ignore"))
+            df = numberize_df(df)
         except:
             raise Exception(f"error getting {table_type} for key {self.name}. "
                             "probably because the table doesn't exist on the page.")
@@ -78,7 +77,7 @@ class Player():
             raise Exception(f"error getting {table_type} for {self.name}. "
                            " probably because the table doesn't exist on the page.")
         # make sure numbers are appropriate dtype
-        df = df.apply(partial(pd.to_numeric, errors="ignore"))
+        df = numberize_df(df)
         df["year"] = year
         
         return df
@@ -106,12 +105,11 @@ class Player():
         
         # clean up the home/away column
         df["H/A"] = df["H/A"].fillna("H").replace("@", "A")
-        
+        df = numberize_df(df)
         # add year
         df["year"] = year
         
         # make sure numbers are appropriate dtype
-        df = df.apply(partial(pd.to_numeric, errors="ignore"))
         return df
         
         
