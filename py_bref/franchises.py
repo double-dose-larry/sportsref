@@ -1,7 +1,6 @@
 from .bref_util import get_fran_info, validate_input, numberize_df
 from .constants import BASE_URL
 import pandas as pd
-from functools import partial
 
 class Franchise():
     
