@@ -1,4 +1,4 @@
-from .bref_util import get_player_info, validate_input, numberize_df
+from .bref_util import get_player_info, validate_input, numberize_df, convert_url
 from .constants import BASE_URL
 import pandas as pd
 
@@ -22,6 +22,10 @@ class Player():
         return "p" if df.P / df.G > 0.5 else "b"
         
     def overview(self, table_type="appearances"):
+        """
+        get data that's normally found on the overview page of a player page
+        """
+        url = f"https://www.baseball-reference.com/players/{self.key[0]}/{self.key}.shtml"
         # validate inputs
         valid_table_types = ["pitching_standard", "pitching_value", "batting_standard",
                             "batting_value", "standard_fielding", "appearances",
@@ -29,7 +33,7 @@ class Player():
         validate_input(table_type, valid_table_types)
         
         # grab the table   
-        player_overview_url = f"{BASE_URL}players%2F{self.key[0]}%2F{self.key}.shtml&div=div_{table_type}"
+        player_overview_url = f"{convert_url(url)}&div=div_{table_type}"
         try:
             df = pd.read_html(player_overview_url)[0].query("Lg == 'NL' or Lg == 'AL'")
             df = df.query("Tm != 'TOT'")
@@ -40,6 +44,11 @@ class Player():
         return df
     
     def splits(self, table_type, split_type="default", year="career"):
+        """
+        get data that's normally found on the splits page of the player
+        """
+        #constants
+        url = f"https://www.baseball-reference.com/players/split.fcgi?id={self.key}&year={year}&t={split_type}"
         
         if split_type == "default":
             split_type = self.pit_or_bat_default
@@ -66,7 +75,7 @@ class Player():
         validate_input(table_type, valid_table_types)
         
         # build splits url
-        splits_url = f"{BASE_URL}players%2Fsplit.fcgi%3Fid%3D{self.key}%26year%3D{year}%26t%3D{split_type}&div=div_{table_type}"
+        splits_url = f"{convert_url(url)}&div=div_{table_type}"
     
         try:
             if str(year).lower() == "career":
@@ -83,6 +92,10 @@ class Player():
         return df
     
     def game_logs(self, year, log_type="default"):
+        """
+        get data that's normally found on the game logs page of the player
+        """
+
         
         if log_type == "default":
             log_type = self.pit_or_bat_default
@@ -95,8 +108,12 @@ class Player():
                         'p' : 'pitching_gamelogs',
                         'f' : '_0'} # wtf bref, you couldn't find a better name?
         
+        # constants
+        url = f"https://www.baseball-reference.com/players/gl.fcgi?id={self.key}&t={log_type}&year={year}"
+        
         # get the data
-        game_log_url = f"{BASE_URL}players%2Fgl.fcgi%3Fid%3D{self.key}%26t%3D{log_type}%26year%3D{year}&div=div_{log_type_map[log_type]}"
+        game_log_url = f"{convert_url(url)}&div=div_{log_type_map[log_type]}"
+#         print(game_log_url)
         df = (pd.read_html(game_log_url)[0]
               .query("Tm != 'Tm'")
               .dropna(subset=["Tm", "Rk"])

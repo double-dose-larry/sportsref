@@ -1,6 +1,8 @@
 import pandas as pd
 from fuzzywuzzy import process
 from functools import partial
+from urllib.parse import quote_plus
+from .constants import BASE_URL, WEB_BASE_URL
 
 def get_players():
     player_db_url = "https://d3k2oh6evki4b7.cloudfront.net/short/inc/players_search_list.csv" # This is what baseball-reference puts in the browser to make their player search fast
@@ -41,7 +43,21 @@ def numberize_df(df):
     
 
 def validate_input(inpt, valid_choices):
-        if not inpt in valid_choices:
-            raise Exception(f"error with choice {inpt}. valid choices are {valid_choices}")
+    """
+    raise an error if inpt is not in valid choices, this serves as a quick hint to the user
+    """
+    if not inpt in valid_choices:
+        raise Exception(f"error with choice {inpt}. valid choices are {valid_choices}")
+            
+
+def convert_url(web_url):
+    """
+    convert the web page that is seen in the browser to the embed url best for pandas
+    """
+    temp = web_url.split(WEB_BASE_URL)[1]
+    return BASE_URL + quote_plus(temp)
+    
+    
+    
             
         
