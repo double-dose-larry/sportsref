@@ -1,5 +1,4 @@
-from .bref_util import get_fran_info, validate_input, numberize_df
-from .constants import BASE_URL
+from .bref_util import get_fran_info, validate_input, numberize_df, convert_url
 import pandas as pd
 
 class Franchise():
@@ -22,7 +21,9 @@ class Franchise():
         valid_table_types =  ['franchise_years', 'history']
         validate_input(fran_table, valid_table_types)
         
-        fran_url = f"{BASE_URL}teams%2F{self.abbr}%2F&div=div_{fran_table}"
+        url = f"https://www.baseball-reference.com/teams/{self.abbr}/"
+        
+        fran_url = f"{convert_url(url)}&div=div_{fran_table}"
         df = pd.read_html(fran_url)[0].query('Tm != "Overall"')
         df = numberize_df(df)
         return df
@@ -32,7 +33,8 @@ class Franchise():
         all batters to play for the franchise
         """
         #  "https://widgets.sports-reference.com/wg.fcgi?css=1&site=br&url=%2Fteams%2FTBD%2Fbat.shtml&div=div_batting_register"
-        fran_bats_url = f"{BASE_URL}teams%2F{self.abbr}%2Fbat.shtml&div=div_batting_register"
+        url = f"https://www.baseball-reference.com/teams/{self.abbr}/bat.shtml"
+        fran_bats_url = f"{convert_url(url)}&div=div_batting_register"
         df = pd.read_html(fran_bats_url)[0].query("Name != 'Name'")
         df = numberize_df(df)
         return df
@@ -42,7 +44,8 @@ class Franchise():
         all batters to play for the franchise
         """
         #  "https://widgets.sports-reference.com/wg.fcgi?css=1&site=br&url=%2Fteams%2FTBD%2Fpitch.shtml&div=div_pitching_register"
-        fran_bats_url = f"{BASE_URL}teams%2F{self.abbr}%2Fpitch.shtml&div=div_pitching_register"
+        url = f"https://www.baseball-reference.com/teams/{self.abbr}/pitch.shtml"
+        fran_bats_url = f"{convert_url(url)}&div=div_pitching_register"
         df = pd.read_html(fran_bats_url)[0].query("Name != 'Name'")
         df = numberize_df(df)
         return df
@@ -55,14 +58,19 @@ class Franchise():
         # "https://widgets.sports-reference.com/wg.fcgi?css=1&site=br&url=%2Fdraft%2F%3Fteam_ID%3DSTL%26year_ID%3D2019%26draft_type%3Djunreg%26query_type%3Dfranch_year%26from_type_jc%3D0%26from_type_hs%3D0%26from_type_4y%3D0%26from_type_unk%3D0&div=div_draft_stats"
         # https://www.baseball-reference.com/draft/?team_ID=STL&year_ID=2019&draft_type=junreg&query_type=franch_year&from_type_jc=0&from_type_hs=0&from_type_4y=0&from_type_unk=0
         query = f"team_ID%3D{self.abbr}%26year_ID%3D{year}%26draft_type%3Djunreg%26query_type%3Dfranch_year%26from_type_jc%3D0%26from_type_hs%3D0%26from_type_4y%3D0%26from_type_unk%3D0"
-        fran_draft_url = f"{BASE_URL}draft%2F%3F{query}&div=div_draft_stats"
+        fran_draft_url = f"https://widgets.sports-reference.com/wg.fcgi?css=1&site=br&url=%2Fdraft%2F%3F{query}&div=div_draft_stats"
+        print(fran_draft_url)
         df = pd.read_html(fran_draft_url)[0]
         df = numberize_df(df)
         return df
     
     def parks(self):
+        """
+        get parks and attendance numbers by year
+        """
         # https://widgets.sports-reference.com/wg.fcgi?css=1&site=br&url=%2Fteams%2FTBD%2Fattend.shtml&div=div_franchise_years
-        fran_parks_url = f"{BASE_URL}teams%2F{self.abbr}%2Fattend.shtml&div=div_franchise_years"
+        url = f"https://www.baseball-reference.com/teams/{self.abbr}/attend.shtml"
+        fran_parks_url = f"{convert_url(url)}&div=div_franchise_years"
         df = pd.read_html(fran_parks_url)[0]
         df = numberize_df(df)
         return df
