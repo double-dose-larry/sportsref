@@ -1,4 +1,5 @@
 from .bref_util import get_fran_info, validate_input, numberize_df, convert_url
+from .team_seasons import TeamSeason
 import pandas as pd
 
 class Franchise():
@@ -27,6 +28,12 @@ class Franchise():
         df = pd.read_html(fran_url)[0].query('Tm != "Overall"')
         df = numberize_df(df)
         return df
+    
+    def season(self, year):
+        # validate
+        validate_input(year, self.years_active)
+        
+        return TeamSeason(self, year)
     
     def batters(self):
         """

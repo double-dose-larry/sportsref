@@ -1,5 +1,4 @@
 from .bref_util import get_fran_info, validate_input, numberize_df, convert_url
-from .franchises import Franchise
 from .team_abbr_parser import TeamAbbrParser
 import pandas as pd
 
