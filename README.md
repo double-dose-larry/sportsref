@@ -16,46 +16,6 @@ display(jiman.overview("batting_standard"))
 display(jiman.overview("batting_value"))
 ```
 
-Currently implemented:
 
-* Players
-    * overview
-        * appearnces
-        * batting_standard
-        * batting_value
-        * batting_postseason
-        * pitching_standard
-        * pitching_value
-        * pitching_postseason
-    * splits
-        * by year or career
-        * a bunch of tables, some common, some for pitchers, some for batters
-    * game logs
-        * by year
-* Franchises
-    * history
-    * batters
-    * pitchers
-    * draft by year
-    * parks
-        
-Planned additions:
-
-* Teams
-    * stats
-        * by season
-    * schedule & results
-        * by season
-    * rosters
-        * by season
-        * coaching staff
-* Seasons
-    * standings
-    * batting stats
-        * team batting
-        * individual batting
-    * pitching stats
-        * team pitching
-        * individual pitching
         
         
