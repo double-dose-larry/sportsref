@@ -128,6 +128,17 @@ class Player():
         
         # make sure numbers are appropriate dtype
         return df
+    
+    def vs_pitcher(self):
+        """
+        returns a pandas.DataFrame of vs_pitcher batting splits
+        """
+        url = f"https://www.baseball-reference.com/play-index/batter_vs_pitcher.cgi?batter={self.key}"
+        data_url = f"{convert_url(url)}&div=div_ajax_result_table"
+        df = (pd.read_html(data_url)[0])
+        df = numberize_df(df)
+        df["name"] = self.name
+        return df
         
         
     
