@@ -6,18 +6,18 @@ from .constants import BASE_URL, WEB_BASE_URL
 
 def get_players():
     player_db_url = "https://d3k2oh6evki4b7.cloudfront.net/short/inc/players_search_list.csv" # This is what baseball-reference puts in the browser to make their player search fast
+    print("im calling bref now")
     all_players_df = (pd.read_csv(player_db_url,
                       names=["key", "name", "years", "is_active", "_drop", "_these", "_empty", "_columns", "pop_rank"])
           .dropna(thresh=1000, axis=1) # drop empty columns
          ).sort_values("pop_rank", ascending=False) # put the most popular searches up top
     return all_players_df
 
-def get_player_info(search_string, verbose=False):
-    df = get_players()
-    name, pct_sure, index = process.extract(search_string, df.name, limit=1)[0]
+def get_player_info(search_string, search_df, verbose=False):
+    name, pct_sure, index = process.extract(search_string, search_df.name, limit=1)[0]
     if verbose:
         print(f"I'm {pct_sure}% sure that you want {name}")
-    return df.loc[index]
+    return search_df.loc[index]
 
 def get_frans():
     url = "https://d3k2oh6evki4b7.cloudfront.net/short/inc/teams_search_list.csv"
@@ -47,17 +47,4 @@ def validate_input(inpt, valid_choices):
     raise an error if inpt is not in valid choices, this serves as a quick hint to the user
     """
     if not inpt in valid_choices:
-        raise Exception(f"error with choice {inpt}. valid choices are {valid_choices}")
-            
-
-def convert_url(web_url):
-    """
-    convert the web page that is seen in the browser to the embed url best for pandas
-    """
-    temp = web_url.split(WEB_BASE_URL)[1]
-    return BASE_URL + quote_plus(temp)
-    
-    
-    
-            
-        
+        raise Exception(f"error with choice {inpt}. valid choices are {valid_choices}")      

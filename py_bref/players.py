@@ -1,7 +1,7 @@
-from .bref_util import get_player_info, validate_input, numberize_df, convert_url
+from .bref_util import get_player_info, validate_input, numberize_df, get_players
 from .page import Page
-from urllib.parse import quote, urlencode
-import pandas as pd
+
+all_player_df = get_players()
 
 
 class BPage(Page):
@@ -13,7 +13,7 @@ class BPage(Page):
 class Player():
     
     def __init__(self, fuzzy_name):
-        p = get_player_info(fuzzy_name, verbose=True)
+        p = get_player_info(fuzzy_name, all_player_df, verbose=True)
         self.key = p.key
         self.name = p["name"]
         self.first_year = int(p.years[:4])
