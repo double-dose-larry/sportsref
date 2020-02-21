@@ -38,6 +38,7 @@ class Page():
     """
     
     def __init__(self, site, path, query_dict={}):
+        self._cached_tables = None
         self.site = site
         self.path = path
         self.query_dict = query_dict
@@ -48,12 +49,16 @@ class Page():
             self.path,          # path
             self.query_string,  # query
             '',                 # fragment
-        ]) 
-        self.tables = self._enumerate_tables()
+        ])
         
-        
+    @property    
+    def tables(self):
+        if not self._cached_tables:
+            self._cached_tables = self._enumerate_tables()
+        return self._cached_tables
+    
     def __repr__(self):
-        return f"< Page, web_url : '{self.web_url}', number of tables : {len(self.tables)} >"
+        return f"< Page, web_url : '{self.web_url}' >"
     
     def _enumerate_tables(self):
         table_id_pattern = re.compile('table_container" id="div_(\w+)"')
@@ -61,14 +66,14 @@ class Page():
             return table_id_pattern.findall(str(res.read()))
     
     def get_data_url(self, table):
-        self._validate_input(table, self.tables)
-        qd = {
+
+        qs = urllib.parse.urlencode({
             'css' : 1,
             'site': self.site,
             'url' :  self.web_url.split(site_map[self.site])[-1],
             'div' : f'div_{table}',
-        }
-        qs = urllib.parse.urlencode(qd)
+        })
+        
         return urllib.parse.urlunsplit([
             'https',                       # scheme
             "widgets.sports-reference.com",# network location
@@ -79,13 +84,5 @@ class Page():
         
     def get_df(self, table):
         data_url = self.get_data_url(table)
-#         print(data_url)
-#         return pd.DataFrame()
         return pd.read_html(self.get_data_url(table))[0]
 
-    def _validate_input(inpt, valid_choices):
-        """
-        raise an error if inpt is not in valid choices, this serves as a quick hint to the user
-        """
-        if not inpt in valid_choices:
-            raise Exception(f"error with choice {inpt}. valid choices are {valid_choices}")

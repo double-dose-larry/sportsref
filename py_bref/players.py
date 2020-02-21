@@ -1,9 +1,14 @@
 from .bref_util import get_player_info, validate_input, numberize_df, convert_url
+from .page import Page
 from urllib.parse import quote, urlencode
 import pandas as pd
 
-BASE_URL = "https://widgets.sports-reference.com/wg.fcgi?"
-WEB_BASE_URL = "https://www.baseball-reference.com/"
+
+class BPage(Page):
+    
+    def __init__(self, path, query_dict={}):
+        super().__init__("br", path, query_dict)
+
 
 class Player():
     
@@ -15,7 +20,7 @@ class Player():
         self.last_year = int(p.years[-4:])
         self.is_active = p.is_active == 1
         self.years_active = list(range(self.first_year, self.last_year + 1))
-        self.pit_or_bat_default = self._pit_or_bat()
+        self.pit_or_bat_default =  self._pit_or_bat()
         
     def __repr__(self):
         return f"< {self.name}, {self.first_year} - {self.last_year}, {'active' if self.is_active else 'not active'} >"
@@ -24,39 +29,22 @@ class Player():
         df = self.overview().sum()
         return "p" if df.P / df.G > 0.5 else "b"
         
-    def overview(self, table_type="appearances"):
+    def overview(self, table="appearances"):
         """
         get data that's normally found on the overview page of a player page
         """
+        
+        
+        # get player overview page
         path = f"/players/{self.key[0]}/{self.key}.shtml"
-        # validate inputs
-        valid_table_types = ["pitching_standard", "pitching_value", "batting_standard",
-                            "batting_value", "standard_fielding", "appearances",
-                            "batting_postseason", "pitching_postseason"]
-        validate_input(table_type, valid_table_types)
+        overview_page = BPage(path)
         
-        # grab the table   
-        # scheme - always http
-        # netloc - class would know
-        # path - will be built by the method
-        # params - none
-        # query - also built by the method - added to the data url
-        # fragment - empty
+        # validate input
+        validate_input(table, overview_page.tables)
         
-        
-        query_dict = {
-            'css': 1,
-            'site': 'br',
-            'url': quote(path),
-            'div': f'div_{table_type}'
-        } 
-        
-        
-        player_overview_url = f"{BASE_URL}{urlencode(query_dict)}"
-        #print(player_overview_url)
-        
+        # pull and clean dataframe
         try:
-            df = pd.read_html(player_overview_url)[0].query("Lg == 'NL' or Lg == 'AL'")
+            df = overview_page.get_df(table).query("Lg == 'NL' or Lg == 'AL'")
             df = df.query("Tm != 'TOT'")
             df = numberize_df(df)
         except:
@@ -64,99 +52,98 @@ class Player():
                             "probably because the table doesn't exist on the page.")
         return df
     
-    def splits(self, table_type, split_type="default", year="career"):
+    def splits(self, table, split_type="default", year="career"):
         """
         get data that's normally found on the splits page of the player
         """
-        #constants
-        url = f"https://www.baseball-reference.com/players/split.fcgi?id={self.key}&year={year}&t={split_type}"
-        
+        # set defaults
         if split_type == "default":
             split_type = self.pit_or_bat_default
         
-        # validate inputs
-        common_tables = ['bases', 'clutc', 'count', 'half', 'hitlo', 'hmvis', 'innng',
-                         'leado', 'lever', 'lineu', 'month', 'oppon', 'outs', 'plato',
-                         'site', 'stad', 'times', 'total', 'traj']
-        pit_only_tables = ['catch', 'defpo', 'dr', 'dr_extra', 'half_extra',
-                           'hmvis_extra', 'month_extra', 'oppon_extra', 'outco',
-                           'outco_extra', 'pitco', 'rs', 'rs_extra', 'site_extra',
-                           'sprel', 'sprel_extra', 'stad_extra', 'tkswg', 'total_extra',
-                           'ump', 'ump_extra']
-        bat_only_tables = ['defp', 'gbfb', 'outcb', 'power', 'stsub']
-        
-        if split_type == 'p':
-            valid_table_types = common_tables + pit_only_tables
-        else:
-            valid_table_types = common_tables + bat_only_tables
-       
-        # run validation
+        # get player splits page
+        path = "players/split.fcgi"
+        query_dict = {
+            'year' : year,
+            'id' : self.key,
+            't' : split_type
+        }
+        splits_page = BPage(path, query_dict)
+
+        # validate input
         validate_input(split_type, ["b", "p"])
         validate_input(year, self.years_active + ["career"])
-        validate_input(table_type, valid_table_types)
-        
-        # build splits url
-        splits_url = f"{convert_url(url)}&div=div_{table_type}"
-    
+        validate_input(table, splits_page.tables)
+            
+        # pull and clean dataframe
         try:
             if str(year).lower() == "career":
-                df = pd.read_html(splits_url)[0].drop("I", axis=1)
+                df = splits_page.get_df(table).drop("I", axis=1)
             else:
-                df = pd.read_html(splits_url)[0]
+                df = splits_page.get_df(table)
         except:
             raise Exception(f"error getting {table_type} for {self.name}. "
                            " probably because the table doesn't exist on the page.")
-        # make sure numbers are appropriate dtype
         df = numberize_df(df)
         df["year"] = year
-        
         return df
     
     def game_logs(self, year, log_type="default"):
         """
         get data that's normally found on the game logs page of the player
         """
-
-        
+        # set defaults
         if log_type == "default":
             log_type = self.pit_or_bat_default
+        
+        log_type_map = {'b' : 'batting_gamelogs',
+            'p' : 'pitching_gamelogs',
+            'f' : '_0'} # wtf bref, you couldn't find a better name?
         
         # run validatation
         validate_input(year, self.years_active)
         validate_input(log_type, ["b","p","f"])
         
-        log_type_map = {'b' : 'batting_gamelogs',
-                        'p' : 'pitching_gamelogs',
-                        'f' : '_0'} # wtf bref, you couldn't find a better name?
-        
-        # constants
-        url = f"https://www.baseball-reference.com/players/gl.fcgi?id={self.key}&t={log_type}&year={year}"
-        
-        # get the data
-        game_log_url = f"{convert_url(url)}&div=div_{log_type_map[log_type]}"
-#         print(game_log_url)
-        df = (pd.read_html(game_log_url)[0]
+        # get gamelog page
+        path = "/players/gl.fcgi"
+        query_dict = {
+            'id': self.key,
+            't' : log_type,
+            'year' : year
+        }
+        game_log_page = BPage(path, query_dict)
+
+        # pull dataframe and clean
+        df = (game_log_page.get_df(log_type_map[log_type])
               .query("Tm != 'Tm'")
               .dropna(subset=["Tm", "Rk"])
               .rename({"Unnamed: 4" : "H/A",
                        "Unnamed: 5" : "H/A"}, axis=1))
-        
         # clean up the home/away column
         df["H/A"] = df["H/A"].fillna("H").replace("@", "A")
         df = numberize_df(df)
-        # add year
         df["year"] = year
-        
-        # make sure numbers are appropriate dtype
         return df
     
-    def vs_pitcher(self):
+    def vs(self, who=None):
         """
         returns a pandas.DataFrame of vs_pitcher batting splits
         """
-        url = f"https://www.baseball-reference.com/play-index/batter_vs_pitcher.cgi?batter={self.key}"
-        data_url = f"{convert_url(url)}&div=div_ajax_result_table"
-        df = (pd.read_html(data_url)[0])
+        # validate
+        validate_input(who, ["batter", "pitcher", None])
+        
+        # set defaults
+        if not who:
+            who = 'pitcher' if self.pit_or_bat_default == 'p' else 'batter'
+        else:
+            who = 'pitcher' if who == 'batter' else 'batter'
+        
+        # get vs page
+        path = "play-index/batter_vs_pitcher.cgi"
+        query_dict = { who : self.key}
+        vs_page = BPage(path, query_dict)
+        
+        # get dataframe and clean
+        df = vs_page.get_df("ajax_result_table")
         df = numberize_df(df)
         df["name"] = self.name
         return df
