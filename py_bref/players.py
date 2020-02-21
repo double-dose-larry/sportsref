@@ -1,6 +1,9 @@
 from .bref_util import get_player_info, validate_input, numberize_df, convert_url
-from .constants import BASE_URL
+from urllib.parse import quote, urlencode
 import pandas as pd
+
+BASE_URL = "https://widgets.sports-reference.com/wg.fcgi?"
+WEB_BASE_URL = "https://www.baseball-reference.com/"
 
 class Player():
     
@@ -25,7 +28,7 @@ class Player():
         """
         get data that's normally found on the overview page of a player page
         """
-        url = f"https://www.baseball-reference.com/players/{self.key[0]}/{self.key}.shtml"
+        path = f"/players/{self.key[0]}/{self.key}.shtml"
         # validate inputs
         valid_table_types = ["pitching_standard", "pitching_value", "batting_standard",
                             "batting_value", "standard_fielding", "appearances",
@@ -33,7 +36,25 @@ class Player():
         validate_input(table_type, valid_table_types)
         
         # grab the table   
-        player_overview_url = f"{convert_url(url)}&div=div_{table_type}"
+        # scheme - always http
+        # netloc - class would know
+        # path - will be built by the method
+        # params - none
+        # query - also built by the method - added to the data url
+        # fragment - empty
+        
+        
+        query_dict = {
+            'css': 1,
+            'site': 'br',
+            'url': quote(path),
+            'div': f'div_{table_type}'
+        } 
+        
+        
+        player_overview_url = f"{BASE_URL}{urlencode(query_dict)}"
+        #print(player_overview_url)
+        
         try:
             df = pd.read_html(player_overview_url)[0].query("Lg == 'NL' or Lg == 'AL'")
             df = df.query("Tm != 'TOT'")
