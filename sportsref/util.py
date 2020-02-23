@@ -2,7 +2,6 @@ import pandas as pd
 from fuzzywuzzy import process
 from functools import partial
 from urllib.parse import quote_plus
-from .constants import BASE_URL, WEB_BASE_URL
 
 def get_players():
     player_db_url = "https://d3k2oh6evki4b7.cloudfront.net/short/inc/players_search_list.csv" # This is what baseball-reference puts in the browser to make their player search fast
@@ -28,8 +27,7 @@ def get_frans():
          )
     return df
 
-def get_fran_info(search_string, verbose=True):
-    df = get_frans()
+def get_fran_info(df, search_string, verbose=True):
     name, pct_sure, index = process.extract(search_string, df.name.append(df.abbr), limit=1)[0]
     if verbose:
         print(f"I'm {pct_sure}% that you want {name}")

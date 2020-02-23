@@ -86,3 +86,4 @@ class Page():
         data_url = self.get_data_url(table)
         return pd.read_html(self.get_data_url(table))[0]
 
+
