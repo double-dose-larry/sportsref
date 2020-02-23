@@ -34,7 +34,6 @@ class Player():
         get data that's normally found on the overview page of a player page
         """
         
-        
         # get player overview page
         path = f"/players/{self.key[0]}/{self.key}.shtml"
         overview_page = BPage(path)
@@ -143,7 +142,7 @@ class Player():
         vs_page = BPage(path, query_dict)
         
         # get dataframe and clean
-        df = vs_page.get_df("ajax_result_table")
+        df = vs_page.get_df("ajax_result_table").query("Name != 'Name'")
         df = numberize_df(df)
         df["name"] = self.name
         return df
