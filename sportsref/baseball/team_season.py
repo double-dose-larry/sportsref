@@ -12,6 +12,12 @@ class TeamSeason():
     def __repr__(self):
         return f"< {self.abbr}, year {self.year} >"
     
+    def lineups(self):
+        path = f"teams/{self.abbr}/{self.year}-lineups.shtml"
+        page = BRPage(path)
+        df = page.get_df(page.tables[0]).query("C != 'C'")
+        return df
+    
     def stats(self, table="team_batting"):
         #get page
         path = f"teams/{self.abbr}/{self.year}.shtml"
