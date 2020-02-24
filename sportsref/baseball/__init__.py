@@ -1,4 +1,4 @@
-from .player import Player
 from .franchise import Franchise
-from .league import League
+from .player import Player
 from .season import Season
+from .league import League

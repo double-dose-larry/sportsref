@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
    name='sportsref',
@@ -6,6 +6,6 @@ setup(
    description='Get sports data from sports-reference.com websites with a pleasant interface',
    author='double_dose_larry',
    author_email='larrydouble33@gmail.com',
-   packages=['sportsref'],  #same as name
+   packages=find_packages(),  #same as name
    install_requires=['fuzzywuzzy', 'pandas'], #external packages as dependencies
 )
