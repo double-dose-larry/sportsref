@@ -247,7 +247,32 @@ class Franchise():
         df = page.get_df("franchise_years")
         df = numberize_df(df)
         return df
-
+    
+    def year_by_year(self, table, pit_or_bat="bat"):
+        validate_input(pit_or_bat, ["pitch", "bat"])
+        path = f"teams/{self.abbr}/{pit_or_bat}team.shtml"
+        page = BRPage(path)
+        validate_input(table, page.tables)
+        df = page.get_df(table)
+        df = numberize_df(df)
+        return df
+    
+    def all_star(self, table="batting_register", pit_or_bat="bat"):
+        validate_input(pit_or_bat, ["pitch", "bat"])        
+        path = f"teams/{self.abbr}/{pit_or_bat}-all-star.shtml"
+        page = BRPage(path)
+        validate_input(table, page.tables)
+        df = page.get_df(table)
+        df = numberize_df(df)
+        return df
+    
+    def managers(self):
+        path = f"teams/{self.abbr}/managers.shtml"
+        page = BRPage(path)
+        df = page.get_df("manager_register")
+        df = numberize_df(df)
+        return df
+    
 class TeamSeason():
     
     def __init__(self, fran, year):
