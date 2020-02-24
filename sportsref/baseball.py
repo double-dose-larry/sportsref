@@ -139,6 +139,36 @@ class Player():
         df = numberize_df(df)
         df["name"] = self.name
         return df
+    
+    def advanced(self, table, stats_type = "default"):
+        
+        if stats_type == "default":
+            stats_type = self.pit_or_bat_default
+        
+        validate_input(stats_type, ["b", "p", "f"])
+        
+        adv_stats_map = {
+            'b' : 'bat',
+            'p' : 'pitch',
+            'f' : 'field'
+        }
+        
+        path = f"players/{self.key[0]}/{self.key}-{adv_stats_map[stats_type]}.shtml"
+        page = BRPage(path)
+        validate_input(table, page.tables)
+        # clean up
+        df = page.get_df(table)
+        return df
+    
+    def hr_log(self, table="play_by_play"):
+        path = "players/event_hr.fcgi"
+        query_dict = {
+            'id' : self.key,
+            't' : self.pit_or_bat_default
+        }
+        page = BRPage(path, query_dict)
+        df = page.get_df(table)
+        return df
         
         
 class Franchise():

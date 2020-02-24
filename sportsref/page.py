@@ -61,7 +61,7 @@ class Page():
         return f"< Page, web_url : '{self.web_url}' >"
     
     def _enumerate_tables(self):
-        table_id_pattern = re.compile('table_container" id="div_(\w+)"')
+        table_id_pattern = re.compile('table_container"\s*id="div_(\w+)"')
         with urllib.request.urlopen(self.web_url) as res:
             return table_id_pattern.findall(str(res.read()))
     
