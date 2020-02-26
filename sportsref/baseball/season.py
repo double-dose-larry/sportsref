@@ -33,3 +33,12 @@ class Season():
         df = df.query("G != 'G'")
         df = numberize_df(df)
         return df
+    
+    def spring_tr(self, table="")
+        path = f"leagues/{self.league}/{self.year}-spring-training-batting.shtml"
+        page = BRPage(path)
+        validate_input(table, page.tables)
+        df = page.get_df(table)
+        df = df.query("Tm != 'Tm'")
+        df = df.numberize_df(df)
+        return df

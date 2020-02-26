@@ -32,7 +32,7 @@ class Player():
         
         # pull and clean dataframe
         try:
-            df = overview_page.get_df(table).query("Lg == 'NL' or Lg == 'AL'")
+            df = overview_page.get_df(table)
             df = df.query("Tm != 'TOT'")
             df = numberize_df(df)
         except:
