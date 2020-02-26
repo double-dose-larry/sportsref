@@ -1,5 +1,15 @@
 ## sportsref
 
+## Install
+
+clone the repo then
+
+```python
+pip install .
+```
+
+## Usage
+
 grab data from baseball-reference.com via a nice OOP interface.
 
 Generally speaking, the idea is to allow to grab any table that is seen on baseball-reference.com as a clean pandas dataframe.
