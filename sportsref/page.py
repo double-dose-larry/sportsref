@@ -2,6 +2,7 @@ import re
 import urllib.request
 import urllib.parse
 import pandas as pd
+from bs4 import BeautifulSoup
 
 site_map = {
     "br" : "www.baseball-reference.com",
@@ -50,20 +51,32 @@ class Page():
             self.query_string,  # query
             '',                 # fragment
         ])
+#         self.tables = self.tables
+        print(f"Available tables: {self.tables}")
         
     @property    
     def tables(self):
         if not self._cached_tables:
             self._cached_tables = self._enumerate_tables()
-        return self._cached_tables
+        return list(self._cached_tables.keys())
     
     def __repr__(self):
         return f"< Page, web_url : '{self.web_url}' >"
     
     def _enumerate_tables(self):
-        table_id_pattern = re.compile('table_container"\s*id="div_(\w+)"')
         with urllib.request.urlopen(self.web_url) as res:
-            return table_id_pattern.findall(str(res.read()))
+            tables = {}
+            html = res.read()
+            html = str(html).replace("<!--", "").replace("-->", "")
+            soup = BeautifulSoup(html, features="lxml")
+            # clear out the footers
+            for tf in soup.find_all("tfoot"):
+                tf.clear()
+            # stuff the dataframes into the dict
+            for tbl in soup.find_all("table"):
+                if not tbl is None:
+                    tables[tbl.get("id")] = pd.read_html(str(tbl))[0]
+            return tables
     
     def get_data_url(self, table):
 
@@ -83,7 +96,6 @@ class Page():
         ])
         
     def get_df(self, table):
-        data_url = self.get_data_url(table)
-        return pd.read_html(self.get_data_url(table))[0]
+        return self._cached_tables[table]
 
 

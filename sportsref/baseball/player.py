@@ -13,19 +13,27 @@ class Player():
         self.last_year = int(p.years[-4:])
         self.is_active = p.is_active == 1
         self.years_active = list(range(self.first_year, self.last_year + 1))
+        self._cached_overview_page = None
         self.pit_or_bat_default =  self._pit_or_bat()
         
+    @property
+    def overview_page(self):
+        if not self._cached_overview_page:
+            self._cached_overview_page = BRPage(f"/players/{self.key[0]}/{self.key}.shtml")
+        return self._cached_overview_page
+        
+        
+
     def __repr__(self):
         return f"< {self.name}, {self.first_year} - {self.last_year}, {'active' if self.is_active else 'not active'} >"
     
     def _pit_or_bat(self):
         df = self.overview().sum()
-        return "p" if df.P / df.G > 0.5 else "b"
+        return "b"#"p" if df.P / df.G > 0.5 else "b"
         
     def overview(self, table="appearances"):
         # get player overview page
-        path = f"/players/{self.key[0]}/{self.key}.shtml"
-        overview_page = BRPage(path)
+        overview_page = self.overview_page
         
         # validate input
         validate_input(table, overview_page.tables)
@@ -36,7 +44,7 @@ class Player():
             df = df.query("Tm != 'TOT'")
             df = numberize_df(df)
         except:
-            raise Exception(f"error getting {table_type} for key {self.name}. "
+            raise Exception(f"error getting {table} for key {self.name}. "
                             "probably because the table doesn't exist on the page.")
         return df
     
