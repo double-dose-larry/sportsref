@@ -19,27 +19,27 @@ class Page():
     A Page requires a site abbreviation ("br" for baseball-reference.com, "cfb" for college-football-reference.com) and a path.
     A Page knows what stats tables are on the page and will return pandas DataFrames when asked.
     
-    >>> page_player = Page(site="br", path="/players/split.fcgi", query_dict = dict(id='albieoz01',year='2019',t='b'))
+    >>> page_player = Page(site="br", path="/players/split.fcgi", query_dict = dict(id='albieoz01',year='2019',t='b'),verbose=False)
     >>> print(page_player.web_url)
     https://www.baseball-reference.com/players/split.fcgi?id=albieoz01&year=2019&t=b
     >>> print(page_player.get_df('total').shape)
     (1, 29)
     
-    >>> print(Page("hr", "/teams/MTL/2020_games.html").get_df("games").shape)
+    >>> print(Page("hr", "/teams/MTL/2020_games.html",verbose=False).get_df("games").shape)
     (86, 16)
     
-    >>> print(Page("cfb", "cfb/players/clyde-edwards-helaire-1/splits/2017/").get_df("splits").shape)
+    >>> print(Page("cfb", "cfb/players/clyde-edwards-helaire-1/splits/2017/",verbose=False).get_df("splits").shape)
     (39, 14)
     
-    >>> print(Page("bbr", "players/l/lopezro01/gamelog/2012").get_df("pgl_basic").shape)
+    >>> print(Page("bbr", "players/l/lopezro01/gamelog/2012", verbose=False).get_df("pgl_basic").shape)
     (69, 30)
     
-    >>> print(Page("cbb", "cbb/schools/kansas/2018-gamelogs.html").get_df("sgl-basic").shape)
+    >>> print(Page("cbb", "cbb/schools/kansas/2018-gamelogs.html", verbose=False).get_df("sgl-basic").shape)
     (41, 40)
     """
     
-    def __init__(self, site, path, query_dict={}):
-        self._cached_tables = None
+    def __init__(self, site, path, query_dict={}, verbose=True):
+
         self.site = site
         self.path = path
         self.query_dict = query_dict
@@ -51,15 +51,12 @@ class Page():
             self.query_string,  # query
             '',                 # fragment
         ])
-#         self.tables = self.tables
-        print(f"Available tables: {self.tables}")
         
-    @property    
-    def tables(self):
-        if not self._cached_tables:
-            self._cached_tables = self._enumerate_tables()
-        return list(self._cached_tables.keys())
-    
+        self._cached_tables = self._enumerate_tables()
+        self.tables = list(self._cached_tables.keys())
+        if verbose:
+            print(f"Available tables: {[ tbl for tbl in self.tables if tbl is not None ]}")
+        
     def __repr__(self):
         return f"< Page, web_url : '{self.web_url}' >"
     
@@ -71,7 +68,10 @@ class Page():
             soup = BeautifulSoup(html, features="lxml")
             # clear out the footers
             for tf in soup.find_all("tfoot"):
-                tf.clear()
+                tf.decompose()
+            # clear out unnecessary repeated column headers
+            for tr_head in soup.find_all("tr", {'class':'thead'}): 
+                tr_head.decompose()
             # stuff the dataframes into the dict
             for tbl in soup.find_all("table"):
                 if not tbl is None:

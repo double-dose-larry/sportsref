@@ -7,5 +7,5 @@ setup(
    author='double_dose_larry',
    author_email='larrydouble33@gmail.com',
    packages=find_packages(),  #same as name
-   install_requires=['fuzzywuzzy', 'pandas'], #external packages as dependencies
+   install_requires=['fuzzywuzzy', 'pandas', 'bs4'], #external packages as dependencies
 )
