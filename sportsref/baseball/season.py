@@ -12,8 +12,6 @@ class Season():
         page = BRPage(path)
         validate_input(table, page.tables)
         df = page.get_df(table)
-        df = df.dropna(subset=["Tm"], axis=1).query("Tm != 'Tm'")
-        df = numberize_df(df)
         return df
     
     def standings(self, table):
@@ -21,7 +19,6 @@ class Season():
         page = BRPage(path)
         validate_input(table, page.tables)
         df = page.get_df(table)
-        df = numberize_df(df)
         return df
         
     def standard_stats(self, table = "", stat_type = "batting"):
@@ -30,8 +27,6 @@ class Season():
         page = BRPage(path)
         validate_input(table, page.tables)
         df = page.get_df(table)
-        df = df.query("G != 'G'")
-        df = numberize_df(df)
         return df
     
     def spring_tr(self, table=""):
@@ -39,6 +34,4 @@ class Season():
         page = BRPage(path)
         validate_input(table, page.tables)
         df = page.get_df(table)
-        df = df.query("Tm != 'Tm'")
-        df = numberize_df(df)
         return df

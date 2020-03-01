@@ -20,12 +20,10 @@ class Franchise():
     def hist(self, table="franchise_years"):
         # get page
         path = f"teams/{self.abbr}"
-        hist_page = BRPage(path)
+        page = BRPage(path)
         #validate
-        validate_input(table, hist_page.tables)
-        # clean
-        df = hist_page.get_df(table).query('Tm != "Overall"')
-        df = numberize_df(df)
+        validate_input(table, page.tables)
+        df = page.get_df(table)
         return df
     
     def season(self, year):
@@ -38,18 +36,14 @@ class Franchise():
         # get page
         path = f"teams/{self.abbr}/bat.shtml"
         page = BRPage(path)
-        # clean df
-        df = page.get_df("batting_register").query("Name != 'Name'")
-        df = numberize_df(df)
+        df = page.get_df("batting_register")
         return df
     
     def pitchers(self):
         """all batters to play for the franchise"""
         path = f"teams/{self.abbr}/pitch.shtml"
         page = BRPage(path)
-        # clean df
-        df = page.get_df("pitching_register").query("Name != 'Name'")
-        df = numberize_df(df)
+        df = page.get_df("pitching_register")
         return df
     
     def draft(self, year):
@@ -69,7 +63,6 @@ class Franchise():
         page = BRPage(path, query_dict)
         # clean
         df = page.get_df("draft_stats")
-        df = numberize_df(df)
         return df
     
     def parks(self):
@@ -78,7 +71,6 @@ class Franchise():
         path = f'teams/{self.abbr}/attend.shtml'
         page = BRPage(path)
         df = page.get_df("franchise_years")
-        df = numberize_df(df)
         return df
     
     def year_by_year(self, table, pit_or_bat="bat"):
@@ -87,7 +79,6 @@ class Franchise():
         page = BRPage(path)
         validate_input(table, page.tables)
         df = page.get_df(table)
-        df = numberize_df(df)
         return df
     
     def all_star(self, table="batting_register", pit_or_bat="bat"):
@@ -96,12 +87,10 @@ class Franchise():
         page = BRPage(path)
         validate_input(table, page.tables)
         df = page.get_df(table)
-        df = numberize_df(df)
         return df
     
     def managers(self):
         path = f"teams/{self.abbr}/managers.shtml"
         page = BRPage(path)
         df = page.get_df("manager_register")
-        df = numberize_df(df)
         return df

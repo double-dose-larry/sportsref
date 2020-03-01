@@ -29,7 +29,7 @@ class Player():
     
     def _pit_or_bat(self):
         df = self.overview().sum()
-        return "b"#"p" if df.P / df.G > 0.5 else "b"
+        return "p" if df.P / df.G > 0.5 else "b"
         
     def overview(self, table="appearances"):
         # get player overview page
@@ -37,15 +37,7 @@ class Player():
         
         # validate input
         validate_input(table, overview_page.tables)
-        
-        # pull and clean dataframe
-        try:
-            df = overview_page.get_df(table)
-            df = df.query("Tm != 'TOT'")
-            df = numberize_df(df)
-        except:
-            raise Exception(f"error getting {table} for key {self.name}. "
-                            "probably because the table doesn't exist on the page.")
+        df = overview_page.get_df(table)
         return df
     
     def splits(self, table, split_type="default", year="career"):
@@ -75,7 +67,6 @@ class Player():
         except:
             raise Exception(f"error getting {table_type} for {self.name}. "
                            " probably because the table doesn't exist on the page.")
-        df = numberize_df(df)
         df["year"] = year
         return df
     
@@ -112,7 +103,6 @@ class Player():
                        "Unnamed: 5" : "H/A"}, axis=1))
         # clean up the home/away column
         df["H/A"] = df["H/A"].fillna("H").replace("@", "A")
-        df = numberize_df(df)
         df["year"] = year
         return df
     
@@ -135,8 +125,7 @@ class Player():
         vs_page = BRPage(path, query_dict)
         
         # get dataframe and clean
-        df = vs_page.get_df("ajax_result_table").query("Name != 'Name'")
-        df = numberize_df(df)
+        df = vs_page.get_df("ajax_result_table")
         df["name"] = self.name
         return df
     

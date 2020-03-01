@@ -15,7 +15,7 @@ class TeamSeason():
     def lineups(self):
         path = f"teams/{self.abbr}/{self.year}-lineups.shtml"
         page = BRPage(path)
-        df = page.get_df(page.tables[0]).query("C != 'C'")
+        df = page.get_df(page.tables[0])
         return df
     
     def stats(self, table="team_batting"):
@@ -23,11 +23,6 @@ class TeamSeason():
         path = f"teams/{self.abbr}/{self.year}.shtml"
         page = BRPage(path)
         validate_input(table, page.tables)
-        #clean
-        df = page.get_df(table).query("Name != 'Name'")
-        filtr = (df.Name.str.contains("Totals")) | (df.Name.str.contains("Rank in"))
-        df = df[~filtr]
-        df = numberize_df(df)
         return df
     
     def schedule_results(self):
@@ -41,5 +36,4 @@ class TeamSeason():
         df_clean_renamed = df_clean.rename({'Unnamed: 4' : "H/A"}, axis=1)
         df_clean_renamed = df_clean_renamed.drop('Unnamed: 2', axis=1)
         df_clean_renamed["H/A"] = df_clean_renamed["H/A"].fillna("H").replace('@','A')
-        df_final = numberize_df(df_clean_renamed)
-        return df_final
+        return df_clean_renamed

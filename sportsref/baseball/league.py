@@ -11,8 +11,6 @@ class League():
         path = f"leagues/{self.league}/"
         page = BRPage(path)
         df = page.get_df("teams_team_wins3000")
-        df = df.query("G != 'G'")
-        df = numberize_df(df)
         return df
     
     def stats(self, table, stats_type="bat"):
@@ -22,6 +20,4 @@ class League():
         page = BRPage(path)
         validate_input(table, page.tables)
         df = page.get_df(table)
-        df = df.query("G != 'G'")
-        df = numberize_df(df)
         return df

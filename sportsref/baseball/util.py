@@ -32,12 +32,6 @@ def get_fran_info(df, search_string, verbose=True):
     if verbose:
         print(f"I'm {pct_sure}% that you want {name}")
     return df.loc[index]
-
-def numberize_df(df):
-    """
-    uses pandas.to_numeric to appropriate columns to numerical dtypes
-    """
-    return df.apply(partial(pd.to_numeric, errors="ignore"))
     
 
 def validate_input(inpt, valid_choices):
