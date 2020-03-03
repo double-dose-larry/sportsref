@@ -10,30 +10,77 @@ class TeamSeason():
         self.abbr = TeamAbbrParser(f"https://www.baseball-reference.com/teams/{fran.abbr}/").team_year_abbr_map[year]
         
     def __repr__(self):
-        return f"< {self.abbr}, year {self.year} >"
-    
-    def lineups(self):
-        path = f"teams/{self.abbr}/{self.year}-lineups.shtml"
-        page = BRPage(path)
-        df = page.get_df(page.tables[0])
-        return df
+        return f"< {self.abbr}, year {self.year} >"  
     
     def stats(self, table="team_batting"):
-        #get page
         path = f"teams/{self.abbr}/{self.year}.shtml"
-        page = BRPage(path)
-        validate_input(table, page.tables)
-        return df
+        return BRPage(path)
     
     def schedule_results(self):
-        # get page
         path = f"teams/{self.abbr}/{self.year}-schedule-scores.shtml"
-        page = BRPage(path)
-        # clean
-        df = page.get_df("team_schedule")
-        clean_up_filter = (df.Tm != 'Tm')
-        df_clean = df[clean_up_filter]
-        df_clean_renamed = df_clean.rename({'Unnamed: 4' : "H/A"}, axis=1)
-        df_clean_renamed = df_clean_renamed.drop('Unnamed: 2', axis=1)
-        df_clean_renamed["H/A"] = df_clean_renamed["H/A"].fillna("H").replace('@','A')
-        return df_clean_renamed
+        return BRPage(path)
+    
+    def roster(self):
+        path = f"teams/{self.abbr}/{self.year}-roster.shtml"
+        
+    def batting(self, page=""):
+        query_pages = ["game_logs", "splits"]
+        validate_input(page, ["detailed"] + query_pages)
+        
+        if page in query_pages:
+            path, query_dict = {
+                'game_logs' : ("teams/tgl.cgi", {
+                    'team' : self.abbr,
+                    't': "b",
+                    'year': self.year
+                }),
+                'splits' : ("teams/splt.cgi", {
+                    'team' : self.abbr,
+                    't' : "b",
+                    'year' : self.year
+                })
+            }.get(page)
+            return BRPage(path, query_dict)
+        else:
+            path = f"teams/{self.abbr}/{self.year}-batting.shtml"
+            return BRPage(path)
+        
+    def pitching(self, page=""):
+        query_pages = ["game_logs", "splits"]
+        validate_input(page, ["detailed"] + query_pages)
+        
+        if page in query_pages:
+            path, query_dict = {
+                'game_logs' : ("teams/tgl.cgi", {
+                    'team' : self.abbr,
+                    't': "p",
+                    'year': self.year
+                }),
+                'splits' : ("teams/splt.cgi", {
+                    'team' : self.abbr,
+                    't' : "p",
+                    'year' : self.year
+                })
+            }.get(page)
+            return BRPage(path, query_dict)
+        else:
+            path = f"teams/{self.abbr}/{self.year}-pitching.shtml"
+            return BRPage(path)
+        
+    def fielding(self):
+        path = f"teams/{self.abbr}/{self.year}-fielding.shtml"
+        return BRPage(path)
+    
+    def scoring(self):
+        path = "play-index/inning_summary.cgi"
+        query_dict = {
+            'year' : self.year,
+            'team_id' : self.abbr
+        }
+        return BRPage(path, query_dict)
+    
+    def other(self, page=""):
+        validate_input(page, ["lineups", "batting-orders"])
+        path = f"teams/{self.abbr}/{self.year}-{page}.shtml"
+        return BRPage(path)
+    
