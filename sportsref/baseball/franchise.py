@@ -17,38 +17,29 @@ class Franchise():
     def __repr__(self):
         return f"< {self.name}, {self.first_year} - {self.last_year} >"
     
-    def hist(self, table="franchise_years"):
-        # get page
+    def hist(self):
         path = f"teams/{self.abbr}"
-        page = BRPage(path)
-        #validate
-        validate_input(table, page.tables)
-        df = page.get_df(table)
-        return df
+        return BRPage(path)
+
+    def people(self, people_type=""):
+        validate_input(people_type, ["pitch", "bat", "managers", "opening",
+                                     "pos", "staff"])
+        path = f"teams/{self.abbr}/{people_type}.shtml"
+        return BRPage(path)
+
     
-    def season(self, year):
-        # validate
-        validate_input(year, self.years_active)
-        return TeamSeason(self, year)
+    def year_by_year(self, pit_or_bat=""):
+        validate_input(pit_or_bat, ["pitch", "bat"])
+        path = f"teams/{self.abbr}/{pit_or_bat}team.shtml"
+        return BRPage(path)
     
-    def batters(self):
-        """all batters to play for the franchise """
-        # get page
-        path = f"teams/{self.abbr}/bat.shtml"
-        page = BRPage(path)
-        df = page.get_df("batting_register")
-        return df
-    
-    def pitchers(self):
-        """all batters to play for the franchise"""
-        path = f"teams/{self.abbr}/pitch.shtml"
-        page = BRPage(path)
-        df = page.get_df("pitching_register")
-        return df
-    
+    def honors(self, honors_type=""):
+        validate_input(honors_type, ["pitch-all-star", "bat-all-star", "hof"])        
+        path = f"teams/{self.abbr}/{honors_type}.shtml"
+        return BRPage(path)
+
+    # these is from the 'Other' menu
     def draft(self, year):
-        """get draft for each round of a year."""
-        # get page
         path = "/draft"
         query_dict = {
             'team': self.abbr,
@@ -60,37 +51,14 @@ class Franchise():
             'from_type_4y' : 0,
             'from_type_unk' : 0
         }
-        page = BRPage(path, query_dict)
-        # clean
-        df = page.get_df("draft_stats")
-        return df
+        return BRPage(path, query_dict)
     
     def parks(self):
-        """get parks and attendance numbers by year"""
-        # get page
         path = f'teams/{self.abbr}/attend.shtml'
-        page = BRPage(path)
-        df = page.get_df("franchise_years")
-        return df
+        return BRPage(path)
     
-    def year_by_year(self, table, pit_or_bat="bat"):
-        validate_input(pit_or_bat, ["pitch", "bat"])
-        path = f"teams/{self.abbr}/{pit_or_bat}team.shtml"
-        page = BRPage(path)
-        validate_input(table, page.tables)
-        df = page.get_df(table)
-        return df
-    
-    def all_star(self, table="batting_register", pit_or_bat="bat"):
-        validate_input(pit_or_bat, ["pitch", "bat"])        
-        path = f"teams/{self.abbr}/{pit_or_bat}-all-star.shtml"
-        page = BRPage(path)
-        validate_input(table, page.tables)
-        df = page.get_df(table)
-        return df
-    
-    def managers(self):
-        path = f"teams/{self.abbr}/managers.shtml"
-        page = BRPage(path)
-        df = page.get_df("manager_register")
-        return df
+    # this is will return a TeamSeason object that will have it's own pages
+    def season(self, year):
+        # validate
+        validate_input(year, self.years_active)
+        return TeamSeason(self, year)

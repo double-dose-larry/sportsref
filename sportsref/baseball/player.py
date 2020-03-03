@@ -5,68 +5,58 @@ all_player_df = get_players()
 
 class Player():
     
-    def __init__(self, fuzzy_name):
-        p = get_player_info(fuzzy_name, all_player_df, verbose=True)
+    def __init__(self, fuzzy_name, verbose=True):
+        p = get_player_info(fuzzy_name, all_player_df, verbose=verbose)
         self.key = p.key
         self.name = p["name"]
         self.first_year = int(p.years[:4])
         self.last_year = int(p.years[-4:])
         self.is_active = p.is_active == 1
         self.years_active = list(range(self.first_year, self.last_year + 1))
-        self._cached_overview_page = None
+        self._cached_overview = None
         self.pit_or_bat_default =  self._pit_or_bat()
         
     @property
     def overview_page(self):
-        if not self._cached_overview_page:
-            self._cached_overview_page = BRPage(f"/players/{self.key[0]}/{self.key}.shtml")
-        return self._cached_overview_page
-        
-        
+        if not self._cached_overview:
+            path = f"/players/{self.key[0]}/{self.key}.shtml"
+            self._cached_overview = BRPage(path, verbose=False)
+        return self._cached_overview
+
 
     def __repr__(self):
-        return f"< {self.name}, {self.first_year} - {self.last_year}, {'active' if self.is_active else 'not active'} >"
+        actv = 'active' if self.is_active else 'not active'
+        return f"< {self.name}, {self.first_year} - {self.last_year}, {actv} >"
     
     def _pit_or_bat(self):
         df = self.overview().sum()
         return "p" if df.P / df.G > 0.5 else "b"
         
     def overview(self, table="appearances"):
-        # get player overview page
         overview_page = self.overview_page
-        
-        # validate input
         validate_input(table, overview_page.tables)
         df = overview_page.get_df(table)
         return df
     
     def splits(self, table, split_type="default", year="career"):
-        # set defaults
+        
         if split_type == "default":
             split_type = self.pit_or_bat_default
         
-        # get player splits page
+            # get player splits page
         path = "players/split.fcgi"
         query_dict = {
-            'year' : year,
-            'id' : self.key,
-            't' : split_type
-        }
-        splits_page = BRPage(path, query_dict)
-        # validate input
+                'year' : year,
+                'id' : self.key,
+                't' : split_type
+            }
         validate_input(split_type, ["b", "p"])
         validate_input(year, self.years_active + ["career"])
+        splits_page = BRPage(path, query_dict)
+        # validate input
         validate_input(table, splits_page.tables)
-            
         # pull and clean dataframe
-        try:
-            if str(year).lower() == "career":
-                df = splits_page.get_df(table).drop("I", axis=1)
-            else:
-                df = splits_page.get_df(table)
-        except:
-            raise Exception(f"error getting {table_type} for {self.name}. "
-                           " probably because the table doesn't exist on the page.")
+        df = splits_page.get_df(table)
         df["year"] = year
         return df
     

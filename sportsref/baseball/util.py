@@ -1,11 +1,10 @@
 import pandas as pd
 from fuzzywuzzy import process
-from functools import partial
 from urllib.parse import quote_plus
 
 def get_players():
     player_db_url = "https://d3k2oh6evki4b7.cloudfront.net/short/inc/players_search_list.csv" # This is what baseball-reference puts in the browser to make their player search fast
-    print("im calling bref now")
+#     print("im calling bref now")
     all_players_df = (pd.read_csv(player_db_url,
                       names=["key", "name", "years", "is_active", "_drop", "_these", "_empty", "_columns", "pop_rank"])
           .dropna(thresh=1000, axis=1) # drop empty columns

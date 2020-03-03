@@ -75,7 +75,7 @@ class Page():
             # stuff the dataframes into the dict
             for tbl in soup.find_all("table"):
                 if not tbl is None:
-                    tables[tbl.get("id")] = pd.read_html(str(tbl))[0]
+                    tables[tbl.get("id")] = tbl
             return tables
     
     def get_data_url(self, table):
@@ -96,6 +96,7 @@ class Page():
         ])
         
     def get_df(self, table):
-        return self._cached_tables[table]
+        tbl = self._cached_tables[table]
+        return pd.read_html(str(tbl))[0]
 
 

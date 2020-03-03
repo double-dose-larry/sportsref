@@ -7,17 +7,21 @@ class League():
         self.league = league
         
     def wins(self):
-        # get page
         path = f"leagues/{self.league}/"
-        page = BRPage(path)
-        df = page.get_df("teams_team_wins3000")
-        return df
+        return BRPage(path)
     
-    def stats(self, table, stats_type="bat"):
-        validate_input(stats_type, ["bat", "pitch", "field", "misc"])
-        # get page
-        path = f"leagues/{self.league}/{stats_type}.shtml"
-        page = BRPage(path)
-        validate_input(table, page.tables)
-        df = page.get_df(table)
-        return df
+    def batting(self):
+        path = f"leagues/{self.league}/bat.shtml"
+        return BRPage(path)
+    
+    def pitching(self):
+        path = f"leagues/{self.league}/pitch.shtml"
+        return BRPage(path)
+    
+    def field(self):
+        path = f"leagues/{self.league}/field.shtml"
+        return BRPage(path)
+    
+    def misc(self):
+        path = f"leagues/{self.league}/misc.shtml"
+        return BRPage(path)
