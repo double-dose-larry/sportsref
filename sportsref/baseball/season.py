@@ -20,7 +20,7 @@ class Season():
         path = f"/leagues/{self.league}/{self.year}-standings.shtml"
         return BRPage(path)
         
-    def fielding(self, page=""):
+    def fielding_pages(self, page=""):
         positions = ["p","c", "1b", "2b", "3b", 
                      "ss", "lf", "rf","cf", "of"]
         validate_input(page, ["standard-fielding", "appearances"] + positions)
@@ -29,7 +29,7 @@ class Season():
         path = f"leagues/{self.league}/{self.year}-{page}-fielding.shtml"
         return BRPage(path)
     
-    def batting(self, page=""):
+    def batting_pages(self, page=""):
         query_pages = ["compare", "splits", "minors", "yesterday"]
         validate_input(page, ["standard", "value", "advanced","win_probability",
                               "ratio", "baserunning", "situational", "pitches",
@@ -46,7 +46,7 @@ class Season():
             path = f"leagues/{self.league}/{self.year}-{page}-batting.shtml"
             return BRPage(path)
         
-    def pitching(self, page=""):
+    def pitching_pages(self, page=""):
         query_pages = ["splits", "minors", "yesterday"]
         validate_input(page, ["standard", "value", "batting", "win_probability",
                               "starter", "reliever", "ratio", "pitches",
@@ -66,7 +66,7 @@ class Season():
         path = f"leagues/{self.league}/{self.year}-managers.shtml"
         return BRPage(path)
     
-    def other(self, page=""):
+    def other_pages(self, page=""):
         query_pages = ["draft", "last_n_day_leaders"]
         validate_input(page, ["misc", "debuts", "rookies", "finalyear", "births",
                               "deaths", "transactions", "free-agents", "opening-day-rosters",

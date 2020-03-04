@@ -23,7 +23,7 @@ class TeamSeason():
     def roster(self):
         path = f"teams/{self.abbr}/{self.year}-roster.shtml"
         
-    def batting(self, page=""):
+    def batting_pages(self, page=""):
         query_pages = ["game_logs", "splits"]
         validate_input(page, ["detailed"] + query_pages)
         
@@ -45,7 +45,7 @@ class TeamSeason():
             path = f"teams/{self.abbr}/{self.year}-batting.shtml"
             return BRPage(path)
         
-    def pitching(self, page=""):
+    def pitching_pages(self, page=""):
         query_pages = ["game_logs", "splits"]
         validate_input(page, ["detailed"] + query_pages)
         
@@ -79,7 +79,7 @@ class TeamSeason():
         }
         return BRPage(path, query_dict)
     
-    def other(self, page=""):
+    def other_pages(self, page=""):
         validate_input(page, ["lineups", "batting-orders"])
         path = f"teams/{self.abbr}/{self.year}-{page}.shtml"
         return BRPage(path)

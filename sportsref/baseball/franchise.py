@@ -21,19 +21,19 @@ class Franchise():
         path = f"teams/{self.abbr}"
         return BRPage(path)
 
-    def people(self, page=""):
+    def people_pages(self, page=""):
         validate_input(page, ["pitch", "bat", "managers", "opening",
                                      "pos", "staff"])
         path = f"teams/{self.abbr}/{people_type}.shtml"
         return BRPage(path)
 
     
-    def year_by_year(self, page=""):
+    def year_by_year_pages(self, page=""):
         validate_input(page, ["pitch", "bat"])
         path = f"teams/{self.abbr}/{pit_or_bat}team.shtml"
         return BRPage(path)
     
-    def honors(self, page=""):
+    def honors_pages(self, page=""):
         validate_input(page, ["pitch-all-star", "bat-all-star", "hof"])        
         path = f"teams/{self.abbr}/{honors_type}.shtml"
         return BRPage(path)

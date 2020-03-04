@@ -26,7 +26,7 @@ class Player():
         path = f"players/{self.key[0]}/{self.key}.shtml"
         return BRPage(path)
     
-    def splits(self, year="", split_type=""):
+    def splits_pages(self, year="", split_type=""):
         validate_input(split_type, ["b", "p"])
         validate_input(year, self.years_active + ["career"])
         path = "players/split.fcgi"
@@ -37,7 +37,7 @@ class Player():
             }
         return BRPage(path, query_dict)
     
-    def game_logs(self, year="", log_type=""):
+    def game_logs_pages(self, year="", log_type=""):
         validate_input(year, self.years_active + ["career", "post"])
         validate_input(log_type, ["b","p","f"])
         path = "/players/gl.fcgi"
@@ -49,7 +49,7 @@ class Player():
         }
         return BRPage(path, query_dict)
     
-    def advanced(self, page=""):
+    def advanced_pages(self, page=""):
         query_pages = ["hr_log",  "vs_pitcher", "vs_batter"]
         validate_input(page, ['bat', 'pitch', 'field'] + query_pages)
         
