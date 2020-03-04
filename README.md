@@ -38,9 +38,9 @@ For example, for a player you'll see start with the "Overview" page that contain
 from sportsref.baseball import Player
 jiman = Player("Ji-Man Choi")
 # returns a pandas df of the "Standard Batting" table
-display(jiman.overview("batting_standard")) 
+display(jiman.overview().get_df("batting_standard")) 
 # returns a pandas df of the "Player Value--Batting" table
-display(jiman.overview("batting_value"))
+display(jiman.overview().get_df("batting_value"))
 ```
 
 
