@@ -39,12 +39,6 @@ def validate_input(inpt, valid_choices):
     """
     if not inpt in valid_choices:
         raise Exception(f"error with choice {inpt}. valid choices are {valid_choices}")
-def make_clickable(val):
-    # target _blank to open new window
-    return '<a target="_blank" href="{}">{}</a>'.format(val, val)
-
-def vid_url(play_id):
-    return f"https://baseballsavant.mlb.com/sporty-videos?playId={play_id}"
 
 def ba(row):
     return row.H/row.AB
