@@ -31,9 +31,9 @@ class Season():
     
     def batting_pages(self, page=""):
         query_pages = ["compare", "splits", "minors", "yesterday"]
-        validate_input(page, ["standard", "value", "advanced","win_probability",
+        validate_input(page, ["standard", "value", "advanced","win_probability", 
                               "ratio", "baserunning", "situational", "pitches",
-                              "cumulative", "neutral"] + query_pages)
+                              "cumulative", "neutral", "spring-training"] + query_pages)
         if page in query_pages:
             path, query_dict = {
                 'compare' : ("leagues/team_compare.cgi", {'lg' : self.league, 'year' : self.year}),

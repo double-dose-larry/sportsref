@@ -38,4 +38,20 @@ def validate_input(inpt, valid_choices):
     raise an error if inpt is not in valid choices, this serves as a quick hint to the user
     """
     if not inpt in valid_choices:
-        raise Exception(f"error with choice {inpt}. valid choices are {valid_choices}")      
+        raise Exception(f"error with choice {inpt}. valid choices are {valid_choices}")
+def make_clickable(val):
+    # target _blank to open new window
+    return '<a target="_blank" href="{}">{}</a>'.format(val, val)
+
+def vid_url(play_id):
+    return f"https://baseballsavant.mlb.com/sporty-videos?playId={play_id}"
+
+def ba(row):
+    return row.H/row.AB
+
+def obp(row):
+    return (row.H + row.BB + row.HPB)/(row.AB + row.BB + row.HBP + row.SF)
+
+def slg(row):
+    singles = row.H - (row["2B"] + row["3B"] + row["HR"])
+    return (singles + row["2B"] * 2 + row["3B"] * 3 + row["HR"] * 4)/row.AB
