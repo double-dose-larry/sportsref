@@ -44,7 +44,7 @@ def ba(row):
     return row.H/row.AB
 
 def obp(row):
-    return (row.H + row.BB + row.HPB)/(row.AB + row.BB + row.HBP + row.SF)
+    return (row.H + row.BB + row.HBP)/(row.AB + row.BB + row.HBP + row.SF)
 
 def slg(row):
     singles = row.H - (row["2B"] + row["3B"] + row["HR"])
