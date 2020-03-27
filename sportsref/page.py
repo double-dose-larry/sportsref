@@ -4,15 +4,6 @@ import urllib.parse
 import pandas as pd
 from bs4 import BeautifulSoup
 
-site_map = {
-    "br" : "www.baseball-reference.com",
-    "hr" : "www.hockey-reference.com",
-    "pfr": "www.pro-football-reference.com",
-    "cfb": "www.sports-reference.com",
-    "bbr": "www.basketball-reference.com",
-    "cbb": "www.sports-reference.com"
-}
-
 
 class Page():
     """Page object represents a sports-reference entity page, such as player or franchise or leauge or team_season or leauge_season.
@@ -46,7 +37,7 @@ class Page():
         self.query_string = urllib.parse.urlencode(self.query_dict)
         self.web_url = urllib.parse.urlunsplit([
             'https',            # scheme
-            site_map[self.site],# network location
+            self.site,          # network location
             self.path,          # path
             self.query_string,  # query
             '',                 # fragment
@@ -83,7 +74,7 @@ class Page():
         qs = urllib.parse.urlencode({
             'css' : 1,
             'site': self.site,
-            'url' :  self.web_url.split(site_map[self.site])[-1],
+            'url' :  self.web_url.split(self.site)[-1],
             'div' : f'div_{table}',
         })
         
