@@ -29,3 +29,16 @@ class Player():
             year = ''
         path = f"players/{self.key[0]}/{self.key}/gamelog/{year}"
         return PFRPage(path)
+    
+    def splits_pages(self, year):
+        validate_input(year, self.years_active + ["career"])
+        if year == 'career':
+            year = ''
+        path = f"players/{self.key[0]}/{self.key}/splits/{year}"
+        return PFRPage(path)
+    
+    def plays_pages(self, year, play_type):
+        validate_input(year, self.years_active)
+        validate_input(play_type, ['receiving', 'passing', 'rushing'])
+        path = f"players/{self.key[0]}/{self.key}/{play_type}-plays/{year}"
+        return PFRPage(path)
