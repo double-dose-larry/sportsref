@@ -18,19 +18,14 @@ class Player():
     def __repr__(self):
         return f"< {self.name}, {self.first_year} - {self.last_year}, {'active' if self.is_active else 'not active'} >"
         
-    def overview(self, table="appearances"):
+    def overview(self):
         # get player overview page
         path = f"/players/{self.key[0]}/{self.key}.htm"
-        overview_page = PFRPage(path)
-        
-        # validate input
-        validate_input(table, overview_page.tables)
-        
-        # pull and clean dataframe
-        try:
-            df = overview_page.get_df(table)
-            df = numberize_df(df)
-        except:
-            raise Exception(f"error getting {table_type} for key {self.name}. "
-                            "probably because the table doesn't exist on the page.")
-        return df
+        return PFRPage(path)
+    
+    def gamelogs_pages(self, year):
+        validate_input(year, self.years_active + ["career", "post"])
+        if year == 'career':
+            year = ''
+        path = f"players/{self.key[0]}/{self.key}/gamelog/{year}"
+        return PFRPage(path)
