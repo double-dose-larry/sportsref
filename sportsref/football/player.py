@@ -42,3 +42,8 @@ class Player():
         validate_input(play_type, ['receiving', 'passing', 'rushing'])
         path = f"players/{self.key[0]}/{self.key}/{play_type}-plays/{year}"
         return PFRPage(path)
+    
+    def more_pages(self, page="penalties"):
+        validate_input(page, ["penalties"])
+        path = f"players/{self.key[0]}/{self.key}/penalties"
+        return PFRPage(path)
