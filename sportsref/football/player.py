@@ -1,12 +1,12 @@
-from .pfr_page import PFRPage
-from .util import *
+from .pfr_page import ProFootballPage
+from ..util import *
 
-all_player_df = get_players()
+all_player_df = get_players_or_teams('football', 'player')
 
 class Player():
     
     def __init__(self, fuzzy_name):
-        p = get_player_info(fuzzy_name, all_player_df, verbose=True)
+        p = find_player_or_team(fuzzy_name, all_player_df, verbose=True)
         self.key = p.key
         self.name = p["name"]
         self.first_year = int(p.years[:4])
@@ -21,29 +21,29 @@ class Player():
     def overview(self):
         # get player overview page
         path = f"/players/{self.key[0]}/{self.key}.htm"
-        return PFRPage(path)
+        return ProFootballPage(path)
     
     def gamelogs_pages(self, year):
         validate_input(year, self.years_active + ["career", "post"])
         if year == 'career':
             year = ''
         path = f"players/{self.key[0]}/{self.key}/gamelog/{year}"
-        return PFRPage(path)
+        return ProFootballPage(path)
     
     def splits_pages(self, year):
         validate_input(year, self.years_active + ["career"])
         if year == 'career':
             year = ''
         path = f"players/{self.key[0]}/{self.key}/splits/{year}"
-        return PFRPage(path)
+        return ProFootballPage(path)
     
     def plays_pages(self, year, play_type):
         validate_input(year, self.years_active)
         validate_input(play_type, ['receiving', 'passing', 'rushing'])
         path = f"players/{self.key[0]}/{self.key}/{play_type}-plays/{year}"
-        return PFRPage(path)
+        return ProFootballPage(path)
     
     def more_pages(self, page="penalties"):
         validate_input(page, ["penalties"])
         path = f"players/{self.key[0]}/{self.key}/penalties"
-        return PFRPage(path)
+        return ProFootballPage(path)

@@ -2,6 +2,7 @@
 
 * write tests
 * provide docs
+* refactor util.py
 
 ## ideas to explore
 
