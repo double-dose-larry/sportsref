@@ -1,5 +1,5 @@
-from .br_page import BRPage
-from .util import *
+from .br_page import BaseballPage
+from ..util import *
 from .team_abbr_parser import TeamAbbrParser
 
 class TeamSeason():
@@ -14,11 +14,11 @@ class TeamSeason():
     
     def stats(self, table="team_batting"):
         path = f"teams/{self.abbr}/{self.year}.shtml"
-        return BRPage(path)
+        return BaseballPage(path)
     
     def schedule_results(self):
         path = f"teams/{self.abbr}/{self.year}-schedule-scores.shtml"
-        return BRPage(path)
+        return BaseballPage(path)
     
     def roster(self):
         path = f"teams/{self.abbr}/{self.year}-roster.shtml"
@@ -40,10 +40,10 @@ class TeamSeason():
                     'year' : self.year
                 })
             }.get(page)
-            return BRPage(path, query_dict)
+            return BaseballPage(path, query_dict)
         else:
             path = f"teams/{self.abbr}/{self.year}-batting.shtml"
-            return BRPage(path)
+            return BaseballPage(path)
         
     def pitching_pages(self, page=""):
         query_pages = ["game_logs", "splits"]
@@ -62,14 +62,14 @@ class TeamSeason():
                     'year' : self.year
                 })
             }.get(page)
-            return BRPage(path, query_dict)
+            return BaseballPage(path, query_dict)
         else:
             path = f"teams/{self.abbr}/{self.year}-pitching.shtml"
-            return BRPage(path)
+            return BaseballPage(path)
         
     def fielding(self):
         path = f"teams/{self.abbr}/{self.year}-fielding.shtml"
-        return BRPage(path)
+        return BaseballPage(path)
     
     def scoring(self):
         path = "play-index/inning_summary.cgi"
@@ -77,10 +77,10 @@ class TeamSeason():
             'year' : self.year,
             'team_id' : self.abbr
         }
-        return BRPage(path, query_dict)
+        return BaseballPage(path, query_dict)
     
     def other_pages(self, page=""):
         validate_input(page, ["lineups", "batting-orders"])
         path = f"teams/{self.abbr}/{self.year}-{page}.shtml"
-        return BRPage(path)
+        return BaseballPage(path)
     

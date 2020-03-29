@@ -1,5 +1,4 @@
-from .br_page import BRPage
-from .util import *
+from .br_page import BaseballPage
 
 class League():
     
@@ -8,20 +7,20 @@ class League():
         
     def wins(self):
         path = f"leagues/{self.league}/"
-        return BRPage(path)
+        return BaseballPage(path)
     
     def batting(self):
         path = f"leagues/{self.league}/bat.shtml"
-        return BRPage(path)
+        return BaseballPage(path)
     
     def pitching(self):
         path = f"leagues/{self.league}/pitch.shtml"
-        return BRPage(path)
+        return BaseballPage(path)
     
     def field(self):
         path = f"leagues/{self.league}/field.shtml"
-        return BRPage(path)
+        return BaseballPage(path)
     
     def misc(self):
         path = f"leagues/{self.league}/misc.shtml"
-        return BRPage(path)
+        return BaseballPage(path)

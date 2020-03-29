@@ -3,6 +3,7 @@
 * write tests
 * provide docs
 * refactor util.py
+* refactor team_abbr_parser - it's ugly
 
 ## ideas to explore
 

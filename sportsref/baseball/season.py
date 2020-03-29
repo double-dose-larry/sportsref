@@ -1,5 +1,5 @@
-from .br_page import BRPage
-from .util import *
+from .br_page import BaseballPage
+from ..util import *
 
 class Season():
     
@@ -9,16 +9,16 @@ class Season():
         
     def overview(self):
         path = f"leagues/{self.league}/{self.year}.shtml"
-        return BRPage(path)
+        return BaseballPage(path)
     
     def minor_leagues(self):
         path = "register/league.cgi"
         query_dict = {'year' : self.year}
-        return BRPage(path, query_dict)
+        return BaseballPage(path, query_dict)
     
     def standings(self):
         path = f"/leagues/{self.league}/{self.year}-standings.shtml"
-        return BRPage(path)
+        return BaseballPage(path)
         
     def fielding_pages(self, page=""):
         positions = ["p","c", "1b", "2b", "3b", 
@@ -27,7 +27,7 @@ class Season():
         if page in positions:
             page = f"specialpos_{page}"
         path = f"leagues/{self.league}/{self.year}-{page}-fielding.shtml"
-        return BRPage(path)
+        return BaseballPage(path)
     
     def batting_pages(self, page=""):
         query_pages = ["compare", "splits", "minors", "yesterday"]
@@ -41,10 +41,10 @@ class Season():
                 'minors' : ("register/leader.cgi", {'type' : "bat", 'year' : self.year}),
                 'yesterday': ("leagues/daily.fcgi", {'type' : "b"})
             }.get(page)
-            return BRPage(path, query_dict)
+            return BaseballPage(path, query_dict)
         else:
             path = f"leagues/{self.league}/{self.year}-{page}-batting.shtml"
-            return BRPage(path)
+            return BaseballPage(path)
         
     def pitching_pages(self, page=""):
         query_pages = ["splits", "minors", "yesterday"]
@@ -57,14 +57,14 @@ class Season():
                 'minors' : ("register/leader.cgi", {'type' : "pitch", 'year' : self.year}),
                 'yesterday': ("leagues/daily.fcgi", {'type' : "p"})
             }.get(page)
-            return BRPage(path, query_dict)
+            return BaseballPage(path, query_dict)
         else:
             path = f"leagues/{self.league}/{self.year}-{page}-pitching.shtml"
-            return BRPage(path)
+            return BaseballPage(path)
         
     def managers(self):
         path = f"leagues/{self.league}/{self.year}-managers.shtml"
-        return BRPage(path)
+        return BaseballPage(path)
     
     def other_pages(self, page=""):
         query_pages = ["draft", "last_n_day_leaders"]
@@ -84,7 +84,7 @@ class Season():
                                         'dates' : "lastndays",
                                         'lastndays': 21})
             }.get(page)
-            return BRPage(path, query_dict)
+            return BaseballPage(path, query_dict)
         else:
             path = f"leagues/{self.league}/{self.year}-{page}.shtml"
-            return BRPage(path)
+            return BaseballPage(path)
