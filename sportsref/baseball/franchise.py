@@ -30,7 +30,7 @@ class Franchise():
     
     def year_by_year_pages(self, page=""):
         validate_input(page, ["pitch", "bat"])
-        path = f"teams/{self.abbr}/{pit_or_bat}team.shtml"
+        path = f"teams/{self.abbr}/{page}team.shtml"
         return BaseballPage(path)
     
     def honors_pages(self, page=""):
