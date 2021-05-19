@@ -19,7 +19,8 @@ class TeamAbbrParser(HTMLParser):
         if tag == 'a':
             for attr in attrs:
                 at, val = attr
-                if isinstance(val, str) and 'teams' in val:
+#                 print(val)
+                if isinstance(val, str) and 'teams' in val and '/' in val:
                     abbr, year = val.split("/")[-2:]
                     year = year.split(".")[0]
                     if year.isdigit():
